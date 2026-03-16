@@ -1,0 +1,13 @@
+De mémoire vous vouliez vous intéressez aux offres d'emploi
+
+Si convaincu (+ données existantes) continuez en ce sens.
+
+Sinon conseil de secteurs :
+-Leboncoin, essayer de vous intéresser à la possibilité de détecter des prix faibles sur certains produits pour les revendre plus cher ailleurs (ex : sur le marché du design d'intérieur il n'est pas rare de voir que les prix pratiqués en province sont inférieurs à ceux de Paris, s'il est possible d'automatiser la collecte des bonnes affaires en province ça peut être pertinent pour faire de l'achat revente)
+
+- Culture, faire un Dashboard à partir des données du CNC (trouver ce qui pourrait être pertinent, déployer un site internet, automatisation de la récolte de données) + croiser avec l'api wikipedia (possibilité de récupérer le nombre de pages views des films, acteurs etc..)
+
+-Finance, construire des automatisations pour récupérer les données financières de certaines entreprises du même secteur, construire les index pertinents, puis donner des conseils d'investissement 
+
+-Jeux vidéo, essayer de (vibe)coder un jeu 
+
