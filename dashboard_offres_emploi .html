@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Stratégique — Marché de l'Emploi France 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0c0d10;
+    --bg2: #13151a;
+    --bg3: #1a1d24;
+    --bg4: #20242e;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #f0f0f0;
+    --text2: #9a9fad;
+    --text3: #5a6070;
+    --blue: #4f8ef7;
+    --blue2: #7db0ff;
+    --blue-dim: rgba(79,142,247,0.15);
+    --green: #2ec08a;
+    --green-dim: rgba(46,192,138,0.15);
+    --orange: #f97316;
+    --orange-dim: rgba(249,115,22,0.15);
+    --red: #ef4444;
+    --amber: #f59e0b;
+    --purple: #a78bfa;
+    --teal: #22d3ee;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  html { font-size: 15px; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    min-height: 100vh;
+    padding: 40px 32px 60px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── HEADER ─── */
+  .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .header-left {}
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 2px;
+    background: var(--blue);
+  }
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 34px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  h1 span { color: var(--blue); }
+  .header-meta {
+    font-size: 12px;
+    color: var(--text3);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .header-badge {
+    background: var(--blue-dim);
+    border: 1px solid rgba(79,142,247,0.3);
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-size: 11px;
+    color: var(--blue2);
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+    align-self: flex-start;
+    margin-top: 4px;
+  }
+
+  /* ─── SECTION LABELS ─── */
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 16px;
+    margin-top: 40px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .section-label:first-child { margin-top: 0; }
+
+  /* ─── KPI STRIP ─── */
+  .kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+  .kpi {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .kpi:hover { border-color: var(--border2); }
+  .kpi::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+  .kpi:nth-child(1)::before { background: var(--blue); }
+  .kpi:nth-child(2)::before { background: var(--green); }
+  .kpi:nth-child(3)::before { background: var(--amber); }
+  .kpi:nth-child(4)::before { background: var(--purple); }
+  .kpi-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 6px;
+  }
+  .kpi-num sup { font-size: 16px; font-weight: 400; margin-left: 2px; color: var(--text2); }
+  .kpi-lbl { font-size: 11px; color: var(--text2); line-height: 1.4; }
+
+  /* ─── ALERT BOX ─── */
+  .alert {
+    background: var(--bg2);
+    border: 1px solid rgba(79,142,247,0.2);
+    border-left: 3px solid var(--blue);
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+    font-size: 12.5px;
+    color: var(--text2);
+    line-height: 1.7;
+    margin-bottom: 28px;
+  }
+  .alert strong { color: var(--text); font-weight: 500; }
+
+  /* ─── GRID LAYOUTS ─── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 14px; margin-bottom: 14px; }
+
+  /* ─── CARD ─── */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+  }
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 20px;
+  }
+
+  /* ─── LEGEND ─── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: 11px;
+    color: var(--text2);
+  }
+  .leg { display: flex; align-items: center; gap: 5px; }
+  .leg-dot {
+    width: 8px; height: 8px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* ─── BAR ROWS ─── */
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .bar-lbl {
+    width: 130px;
+    flex-shrink: 0;
+    font-size: 11px;
+    color: var(--text2);
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .bar-lbl.wide { width: 160px; }
+  .bar-track {
+    flex: 1;
+    background: var(--bg4);
+    border-radius: 4px;
+    height: 7px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 7px;
+    border-radius: 4px;
+    transition: width 0.6s ease;
+  }
+  .bar-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    width: 42px;
+    text-align: right;
+  }
+
+  /* ─── SALARY ROWS ─── */
+  .sal-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+  .sal-row:last-child { border-bottom: none; }
+  .sal-range { color: var(--text2); width: 120px; flex-shrink: 0; }
+  .sal-track { flex: 1; background: var(--bg4); border-radius: 4px; height: 5px; }
+  .sal-bar { height: 5px; border-radius: 4px; }
+  .sal-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    width: 36px;
+    text-align: right;
+  }
+
+  /* ─── QUAL ROWS ─── */
+  .qual-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .qual-lbl { font-size: 11px; color: var(--text2); width: 150px; flex-shrink: 0; }
+  .qual-track { flex: 1; background: var(--bg4); border-radius: 4px; height: 5px; }
+  .qual-fill { height: 5px; border-radius: 4px; }
+  .qual-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text);
+    width: 55px;
+    text-align: right;
+  }
+
+  /* ─── MINI STATS ─── */
+  .mini-grid { display: grid; grid-template-columns: 1fr; gap: 1px; }
+  .mini-item {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .mini-item:last-child { border-bottom: none; }
+  .mini-lbl { font-size: 11px; color: var(--text2); }
+  .mini-val {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  .mini-val span { font-size: 12px; font-weight: 400; color: var(--text2); }
+
+  /* ─── INSIGHT TAGS ─── */
+  .tag-cloud { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 16px; }
+  .tag {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    color: var(--text2);
+  }
+  .tag strong { color: var(--text); font-weight: 500; }
+
+  /* ─── ROME RISK ROWS ─── */
+  .risk-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .risk-row:last-child { border-bottom: none; }
+  .risk-label { font-size: 11px; color: var(--text2); flex: 1; line-height: 1.4; }
+  .risk-bar-track { width: 70px; background: var(--bg4); border-radius: 4px; height: 4px; flex-shrink: 0; }
+  .risk-bar-fill { height: 4px; border-radius: 4px; background: var(--red); }
+  .risk-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .risk-high { background: rgba(239,68,68,0.15); color: #fca5a5; }
+  .risk-med { background: rgba(245,158,11,0.15); color: #fcd34d; }
+
+  /* ─── CHART WRAPPERS ─── */
+  .chart-wrap { position: relative; width: 100%; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+  }
+  .footer-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--blue); display: inline-block; margin: 0 6px; }
+
+  /* ─── DONUT CENTER ─── */
+  .donut-wrap { position: relative; }
+  .donut-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+  }
+  .donut-center-val {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+  .donut-center-lbl {
+    font-size: 9px;
+    color: var(--text3);
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 3px;
+  }
+
+  /* ─── CALLOUT NUMBER ─── */
+  .callout {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    text-align: center;
+  }
+  .callout-val {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .callout-lbl { font-size: 10px; color: var(--text2); line-height: 1.4; }
+
+  .accent-blue { color: var(--blue); }
+  .accent-green { color: var(--green); }
+  .accent-orange { color: var(--orange); }
+  .accent-red { color: var(--red); }
+  .accent-amber { color: var(--amber); }
+  .accent-purple { color: var(--purple); }
+
+  .span-full { grid-column: 1 / -1; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="page-header">
+  <div class="header-left">
+    <div class="eyebrow">Projet de recherche · Impact de l'IA sur la recherche d'emploi</div>
+    <h1>Marché de l'emploi<br><span>France</span> — Mars 2026</h1>
+    <div class="header-meta">Analyse de 3 000 offres actives &nbsp;·&nbsp; Source : France Travail &nbsp;·&nbsp; Extraction 17.03.2026</div>
+  </div>
+  <div class="header-badge">n = 3 000 offres · 57 variables</div>
+</header>
+
+<!-- KPI STRIP -->
+<div class="section-label">Vue d'ensemble</div>
+<div class="kpi-strip">
+  <div class="kpi">
+    <div class="kpi-num">3 000</div>
+    <div class="kpi-lbl">Offres analysées</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-num">1 886<sup>€</sup></div>
+    <div class="kpi-lbl">Salaire médian mensuel brut</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-num">81<sup>%</sup></div>
+    <div class="kpi-lbl">Postes à temps plein</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-num">57<sup>%</sup></div>
+    <div class="kpi-lbl">Expérience requise</div>
+  </div>
+</div>
+
+<!-- ALERT -->
+<div class="alert">
+  <strong>Signal marché :</strong> 27,9 % des offres transitent par des agences d'intérim (secteur 78), révélant une forte précarisation du marché. Le CDI domine à 43,5 % mais le salaire médian reste très proche du SMIC — ce qui illustre la pression salariale généralisée sur les emplois peu qualifiés.
+</div>
+
+<!-- ROW 1: Contrats + Salaires -->
+<div class="section-label">Structure contractuelle & salariale</div>
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">Répartition par type de contrat</div>
+    <div class="legend">
+      <span class="leg"><span class="leg-dot" style="background:#4f8ef7"></span>CDI 43,5 %</span>
+      <span class="leg"><span class="leg-dot" style="background:#2ec08a"></span>CDD 30,0 %</span>
+      <span class="leg"><span class="leg-dot" style="background:#f97316"></span>Intérim 21,6 %</span>
+      <span class="leg"><span class="leg-dot" style="background:#f59e0b"></span>Saisonnier 3,9 %</span>
+      <span class="leg"><span class="leg-dot" style="background:#5a6070"></span>Autres 1,0 %</span>
+    </div>
+    <div class="donut-wrap">
+      <div class="chart-wrap" style="height:220px;">
+        <canvas id="c-contrat" role="img" aria-label="Répartition des types de contrat">CDI 1304, CDD 899, Intérim 647, Saisonnier 117, Autres 33</canvas>
+        <div class="donut-center">
+          <div class="donut-center-val">3 000</div>
+          <div class="donut-center-lbl">offres</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Distribution salariale (mensuel brut)</div>
+    <div class="sal-row">
+      <span class="sal-range">&lt; 1 500 €</span>
+      <div class="sal-track"><div class="sal-bar" style="width:6.5%;background:var(--red)"></div></div>
+      <span class="sal-count">90</span>
+    </div>
+    <div class="sal-row">
+      <span class="sal-range">1 500 – 2 000 €</span>
+      <div class="sal-track"><div class="sal-bar" style="width:100%;background:var(--blue)"></div></div>
+      <span class="sal-count">1 333</span>
+    </div>
+    <div class="sal-row">
+      <span class="sal-range">2 000 – 2 500 €</span>
+      <div class="sal-track"><div class="sal-bar" style="width:40%;background:var(--green)"></div></div>
+      <span class="sal-count">544</span>
+    </div>
+    <div class="sal-row">
+      <span class="sal-range">2 500 – 3 000 €</span>
+      <div class="sal-track"><div class="sal-bar" style="width:8.5%;background:var(--green)"></div></div>
+      <span class="sal-count">114</span>
+    </div>
+    <div class="sal-row">
+      <span class="sal-range">3 000 – 4 000 €</span>
+      <div class="sal-track"><div class="sal-bar" style="width:3.8%;background:var(--amber)"></div></div>
+      <span class="sal-count">51</span>
+    </div>
+    <div class="sal-row">
+      <span class="sal-range">&gt; 4 000 €</span>
+      <div class="sal-track"><div class="sal-bar" style="width:1.2%;background:var(--orange)"></div></div>
+      <span class="sal-count">16</span>
+    </div>
+    <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);display:flex;gap:20px;">
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Médiane</div>
+        <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--green);">1 886 €</div>
+      </div>
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Moyenne</div>
+        <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--text2);">2 411 €</div>
+      </div>
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Offres avec salaire</div>
+        <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--text2);">72,2 %</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ROW 2: Qualification + Top métiers -->
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">Salaire médian par niveau de qualification</div>
+    <div class="qual-row">
+      <div class="qual-lbl">Cadre</div>
+      <div class="qual-track"><div class="qual-fill" style="width:100%;background:var(--blue)"></div></div>
+      <div class="qual-val accent-blue">3 000 €</div>
+    </div>
+    <div class="qual-row">
+      <div class="qual-lbl">Agent de maîtrise</div>
+      <div class="qual-track"><div class="qual-fill" style="width:83%;background:var(--blue)"></div></div>
+      <div class="qual-val accent-blue">2 500 €</div>
+    </div>
+    <div class="qual-row">
+      <div class="qual-lbl">Technicien</div>
+      <div class="qual-track"><div class="qual-fill" style="width:72%;background:var(--teal)"></div></div>
+      <div class="qual-val" style="color:var(--teal)">2 167 €</div>
+    </div>
+    <div class="qual-row">
+      <div class="qual-lbl">Ouvrier qual. P3/P4</div>
+      <div class="qual-track"><div class="qual-fill" style="width:68%;background:var(--green)"></div></div>
+      <div class="qual-val accent-green">2 048 €</div>
+    </div>
+    <div class="qual-row">
+      <div class="qual-lbl">Employé qualifié</div>
+      <div class="qual-track"><div class="qual-fill" style="width:65%;background:var(--green)"></div></div>
+      <div class="qual-val accent-green">1 941 €</div>
+    </div>
+    <div class="qual-row">
+      <div class="qual-lbl">Ouvrier spécialisé</div>
+      <div class="qual-track"><div class="qual-fill" style="width:64%;background:var(--amber)"></div></div>
+      <div class="qual-val accent-amber">1 916 €</div>
+    </div>
+    <div class="qual-row">
+      <div class="qual-lbl">Ouvrier qualifié P1/P2</div>
+      <div class="qual-track"><div class="qual-fill" style="width:63%;background:var(--amber)"></div></div>
+      <div class="qual-val accent-amber">1 896 €</div>
+    </div>
+    <div class="qual-row" style="margin-bottom:0">
+      <div class="qual-lbl">Manœuvre / Non qual.</div>
+      <div class="qual-track"><div class="qual-fill" style="width:61%;background:var(--red)"></div></div>
+      <div class="qual-val accent-red">1 823 €</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Top 10 métiers les plus demandés</div>
+    <div class="bar-row">
+      <div class="bar-lbl">Employé familial</div>
+      <div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--blue)"></div></div>
+      <div class="bar-val">112</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-lbl">Serveur restauration</div>
+      <div class="bar-track"><div class="bar-fill" style="width:66%;background:var(--blue)"></div></div>
+      <div class="bar-val">74</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-lbl">Cuisinier</div>
+      <div class="bar-track"><div class="bar-fill" style="width:63%;background:var(--green)"></div></div>
+      <div class="bar-val">71</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-lbl">Chauffeur PL</div>
+      <div class="bar-track"><div class="bar-fill" style="width:55%;background:var(--green)"></div></div>
+      <div class="bar-val">62</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-lbl">Agent propreté</div>
+      <div class="bar-track"><div class="bar-fill" style="width:54%;background:var(--amber)"></div></div>
+      <div class="bar-val">61</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-lbl">Assistant de vie</div>
+      <div class="bar-track"><div class="bar-fill" style="width:47%;background:var(--amber)"></div></div>
+      <div class="bar-val">53</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-lbl">Enquêteur sondage</div>
+      <div class="bar-track"><div class="bar-fill" style="width:37%;background:var(--orange)"></div></div>
+      <div class="bar-val">42</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-lbl">Vendeur épicerie</div>
+      <div class="bar-track"><div class="bar-fill" style="width:37%;background:var(--orange)"></div></div>
+      <div class="bar-val">41</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-lbl">Manœuvre bâtiment</div>
+      <div class="bar-track"><div class="bar-fill" style="width:37%;background:var(--orange)"></div></div>
+      <div class="bar-val">41</div>
+    </div>
+    <div class="bar-row" style="margin-bottom:0">
+      <div class="bar-lbl">Cariste</div>
+      <div class="bar-track"><div class="bar-fill" style="width:36%;background:var(--orange)"></div></div>
+      <div class="bar-val">40</div>
+    </div>
+  </div>
+</div>
+
+<!-- ROW 3: Secteurs + Taille entreprises -->
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">Top secteurs d'activité</div>
+    <div class="bar-row">
+      <div class="bar-lbl wide">Agences travail temp.</div>
+      <div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--orange)"></div></div>
+      <div class="bar-val">791</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-lbl wide">Restauration trad.</div>
+      <div class="bar-track"><div class="bar-fill" style="width:15%;background:var(--green)"></div></div>
+      <div class="bar-val">121</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-lbl wide">Aide à domicile</div>
+      <div class="bar-track"><div class="bar-fill" style="width:15%;background:var(--green)"></div></div>
+      <div class="bar-val">119</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-lbl wide">Nettoyage bâtiments</div>
+      <div class="bar-track"><div class="bar-fill" style="width:13%;background:var(--teal)"></div></div>
+      <div class="bar-val">106</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-lbl wide">Administration pub.</div>
+      <div class="bar-track"><div class="bar-fill" style="width:11%;background:var(--blue)"></div></div>
+      <div class="bar-val">84</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-lbl wide">Conseil affaires</div>
+      <div class="bar-track"><div class="bar-fill" style="width:8%;background:var(--blue)"></div></div>
+      <div class="bar-val">65</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-lbl wide">Formation adultes</div>
+      <div class="bar-track"><div class="bar-fill" style="width:7%;background:var(--purple)"></div></div>
+      <div class="bar-val">58</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-lbl wide">Services admin. bureau</div>
+      <div class="bar-track"><div class="bar-fill" style="width:7%;background:var(--purple)"></div></div>
+      <div class="bar-val">57</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-lbl wide">Sièges sociaux</div>
+      <div class="bar-track"><div class="bar-fill" style="width:7%;background:var(--text3)"></div></div>
+      <div class="bar-val">55</div>
+    </div>
+    <div class="bar-row" style="margin-bottom:0">
+      <div class="bar-lbl wide">Accueil jeunes enfants</div>
+      <div class="bar-track"><div class="bar-fill" style="width:6%;background:var(--text3)"></div></div>
+      <div class="bar-val">47</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Taille des établissements recruteurs</div>
+    <div class="chart-wrap" style="height:230px;">
+      <canvas id="c-taille" role="img" aria-label="Taille des établissements recruteurs par nombre de salariés">Petites structures dominent avec les plus grands volumes</canvas>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 2: SIGNAUX STRUCTURELS -->
+<div class="section-label" style="margin-top:40px;">Signaux structurels du marché</div>
+
+<div class="grid-3">
+  <div class="card">
+    <div class="card-title">Expérience exigée</div>
+    <div class="chart-wrap" style="height:160px;">
+      <canvas id="c-exp" role="img" aria-label="Expérience exigée vs débutants acceptés">Expérience requise 1711 vs débutant 1289</canvas>
+    </div>
+    <div class="legend" style="margin-top:10px;">
+      <span class="leg"><span class="leg-dot" style="background:var(--blue)"></span>Requise 57 %</span>
+      <span class="leg"><span class="leg-dot" style="background:var(--green)"></span>Débutant 43 %</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Temps de travail</div>
+    <div class="chart-wrap" style="height:160px;">
+      <canvas id="c-temps" role="img" aria-label="Répartition temps plein vs temps partiel">Temps plein 2430 vs temps partiel 543</canvas>
+    </div>
+    <div class="legend" style="margin-top:10px;">
+      <span class="leg"><span class="leg-dot" style="background:var(--blue)"></span>Plein 81 %</span>
+      <span class="leg"><span class="leg-dot" style="background:var(--red)"></span>Partiel 19 %</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Accessibilité & modalités</div>
+    <div class="mini-grid">
+      <div class="mini-item">
+        <div class="mini-lbl">Alternance</div>
+        <div class="mini-val">3,1 <span>%</span></div>
+      </div>
+      <div class="mini-item">
+        <div class="mini-lbl">Accessible TH</div>
+        <div class="mini-val">5,4 <span>%</span></div>
+      </div>
+      <div class="mini-item">
+        <div class="mini-lbl">Postes / offre (moy.)</div>
+        <div class="mini-val">1,05</div>
+      </div>
+      <div class="mini-item">
+        <div class="mini-lbl">Permis B requis</div>
+        <div class="mini-val">24 <span>%</span></div>
+      </div>
+      <div class="mini-item" style="border:none">
+        <div class="mini-lbl">Déplacement requis</div>
+        <div class="mini-val">38 <span>%</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">Mobilité professionnelle requise</div>
+    <div class="chart-wrap" style="height:200px;">
+      <canvas id="c-deplacement" role="img" aria-label="Mobilité requise par zone géographique">Local 549, National 317, Régional 136, Départemental 136</canvas>
+    </div>
+    <div class="legend" style="margin-top:10px;">
+      <span class="leg"><span class="leg-dot" style="background:var(--blue)"></span>Local</span>
+      <span class="leg"><span class="leg-dot" style="background:var(--green)"></span>National</span>
+      <span class="leg"><span class="leg-dot" style="background:var(--amber)"></span>Régional</span>
+      <span class="leg"><span class="leg-dot" style="background:#5a6070"></span>Dép.</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Permis de conduire exigés (top mentions)</div>
+    <div class="bar-row">
+      <div class="bar-lbl wide">Permis B (VL)</div>
+      <div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--blue)"></div></div>
+      <div class="bar-val">723</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-lbl wide">C + CE (PL + remorque)</div>
+      <div class="bar-track"><div class="bar-fill" style="width:2.9%;background:var(--amber)"></div></div>
+      <div class="bar-val">21</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-lbl wide">C seul (PL)</div>
+      <div class="bar-track"><div class="bar-fill" style="width:2.5%;background:var(--amber)"></div></div>
+      <div class="bar-val">18</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-lbl wide">CE seul</div>
+      <div class="bar-track"><div class="bar-fill" style="width:1.8%;background:var(--text3)"></div></div>
+      <div class="bar-val">13</div>
+    </div>
+    <div class="bar-row" style="margin-bottom:0">
+      <div class="bar-lbl wide">A + B (moto + VL)</div>
+      <div class="bar-track"><div class="bar-fill" style="width:0.8%;background:var(--text3)"></div></div>
+      <div class="bar-val">6</div>
+    </div>
+    <div style="margin-top:16px;padding:12px;background:var(--bg3);border-radius:var(--radius-sm);border:1px solid var(--border);">
+      <div style="font-size:11px;color:var(--text2);line-height:1.6;">Le permis B concentre 95 % des mentions de permis, confirmant la prévalence des métiers terrain et les déplacements clients / chantiers.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 3: LECTURE IA -->
+<div class="section-label" style="margin-top:40px;">Lecture IA × Emploi — Risques & Complémentarités</div>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">Métiers à risque de substitution IA / automatisation</div>
+    <div class="risk-row">
+      <div class="risk-label"><strong style="color:var(--text)">Enquêteur sondage</strong> — tâches scriptées, collecte standardisée</div>
+      <div class="risk-bar-track"><div class="risk-bar-fill" style="width:95%"></div></div>
+      <div class="risk-badge risk-high">Élevé</div>
+    </div>
+    <div class="risk-row">
+      <div class="risk-label"><strong style="color:var(--text)">Vendeur épicerie</strong> — conseil produit standardisé, caisse auto.</div>
+      <div class="risk-bar-track"><div class="risk-bar-fill" style="width:85%"></div></div>
+      <div class="risk-badge risk-high">Élevé</div>
+    </div>
+    <div class="risk-row">
+      <div class="risk-label"><strong style="color:var(--text)">Cariste</strong> — AGV et robots de picking entrepôts</div>
+      <div class="risk-bar-track"><div class="risk-bar-fill" style="width:80%"></div></div>
+      <div class="risk-badge risk-high">Élevé</div>
+    </div>
+    <div class="risk-row">
+      <div class="risk-label"><strong style="color:var(--text)">Agent propreté</strong> — robots d'aspiration / nettoyage auto.</div>
+      <div class="risk-bar-track"><div class="risk-bar-fill" style="width:70%;background:var(--amber)"></div></div>
+      <div class="risk-badge risk-med">Moyen</div>
+    </div>
+    <div class="risk-row">
+      <div class="risk-label"><strong style="color:var(--text)">Contrôleur qualité</strong> — vision artificielle & inspection auto.</div>
+      <div class="risk-bar-track"><div class="risk-bar-fill" style="width:65%;background:var(--amber)"></div></div>
+      <div class="risk-badge risk-med">Moyen</div>
+    </div>
+    <div class="risk-row" style="border:none">
+      <div class="risk-label"><strong style="color:var(--text)">Chauffeur PL</strong> — véhicules autonomes (horizon 5–10 ans)</div>
+      <div class="risk-bar-track"><div class="risk-bar-fill" style="width:45%;background:var(--amber)"></div></div>
+      <div class="risk-badge risk-med">Moyen</div>
+    </div>
+    <div style="margin-top:14px;padding:10px 12px;background:var(--bg3);border-radius:var(--radius-sm);border-left:2px solid var(--red);">
+      <div style="font-size:11px;color:var(--text2);line-height:1.6;">Estimation qualitative basée sur la nature des tâches décrites dans les descriptions de poste. Ces 6 métiers représentent <strong style="color:var(--text)">265 offres</strong> soit 8,8 % du corpus.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Compétences humaines résistantes à l'IA</div>
+    <div style="margin-bottom:16px;">
+      <div style="font-size:11px;color:var(--text2);line-height:1.7;margin-bottom:14px;">Les qualités professionnelles les plus citées dans les offres forment un cluster de soft skills que les LLM ne peuvent pas remplacer à court terme.</div>
+      <div class="tag-cloud">
+        <span class="tag"><strong>Écoute & empathie</strong></span>
+        <span class="tag"><strong>Autonomie</strong></span>
+        <span class="tag"><strong>Travail en équipe</strong></span>
+        <span class="tag"><strong>Rigueur</strong></span>
+        <span class="tag"><strong>Organisation</strong></span>
+        <span class="tag"><strong>Polyvalence</strong></span>
+        <span class="tag"><strong>Réactivité</strong></span>
+        <span class="tag"><strong>Communication</strong></span>
+        <span class="tag"><strong>Créativité</strong></span>
+        <span class="tag"><strong>Présence physique</strong></span>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;">
+      <div class="card-title" style="margin-bottom:14px;">Secteurs les plus résistants à la substitution</div>
+      <div class="bar-row">
+        <div class="bar-lbl wide">Aide à domicile</div>
+        <div class="bar-track"><div class="bar-fill" style="width:95%;background:var(--green)"></div></div>
+        <div class="bar-val">119</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-lbl wide">Restauration</div>
+        <div class="bar-track"><div class="bar-fill" style="width:95%;background:var(--green)"></div></div>
+        <div class="bar-val">121</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-lbl wide">Administration pub.</div>
+        <div class="bar-track"><div class="bar-fill" style="width:65%;background:var(--teal)"></div></div>
+        <div class="bar-val">84</div>
+      </div>
+      <div class="bar-row" style="margin-bottom:0">
+        <div class="bar-lbl wide">Accueil petite enfance</div>
+        <div class="bar-track"><div class="bar-fill" style="width:37%;background:var(--teal)"></div></div>
+        <div class="bar-val">47</div>
+      </div>
+    </div>
+    <div style="margin-top:14px;padding:10px 12px;background:var(--bg3);border-radius:var(--radius-sm);border-left:2px solid var(--green);">
+      <div style="font-size:11px;color:var(--text2);line-height:1.6;">Ces secteurs cumulent <strong style="color:var(--text)">371 offres (12,4 %)</strong> et exigent tous présence physique, relationnel et improvisation — compétences clés non automatisables.</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>France Travail<span class="footer-dot"></span>Extraction 17.03.2026<span class="footer-dot"></span>n = 3 000 offres · 57 variables</div>
+  <div>Projet de recherche — Impact de l'IA sur la recherche d'emploi</div>
+</footer>
+
+<script>
+  const textColor = 'rgba(154,159,173,0.8)';
+  const gridColor = 'rgba(255,255,255,0.06)';
+
+  const baseOpts = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } }
+  };
+
+  // Contrats — Doughnut
+  new Chart(document.getElementById('c-contrat'), {
+    type: 'doughnut',
+    data: {
+      labels: ['CDI', 'CDD', 'Intérim', 'Saisonnier', 'Autres'],
+      datasets: [{
+        data: [1304, 899, 647, 117, 33],
+        backgroundColor: ['#4f8ef7','#2ec08a','#f97316','#f59e0b','#3a3f50'],
+        borderWidth: 3,
+        borderColor: '#0c0d10',
+        hoverOffset: 6
+      }]
+    },
+    options: { ...baseOpts, cutout: '65%' }
+  });
+
+  // Taille — Bar
+  new Chart(document.getElementById('c-taille'), {
+    type: 'bar',
+    data: {
+      labels: ['0','1-2','3-5','6-9','10-19','20-49','50-99','100-199','200-249','250-499','500+'],
+      datasets: [{
+        data: [337, 245, 368, 228, 319, 325, 179, 166, 66, 74, 50],
+        backgroundColor: 'rgba(167,139,250,0.7)',
+        borderColor: '#a78bfa',
+        borderWidth: 1,
+        borderRadius: 4
+      }]
+    },
+    options: {
+      ...baseOpts,
+      scales: {
+        x: { ticks: { color: textColor, font: { size: 9 }, maxRotation: 0 }, grid: { display: false }, border: { display: false } },
+        y: { ticks: { color: textColor, font: { size: 10 } }, grid: { color: gridColor }, border: { display: false } }
+      },
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ' ' + c.parsed.y + ' offres' } } }
+    }
+  });
+
+  // Expérience — Doughnut
+  new Chart(document.getElementById('c-exp'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Requise','Débutant'],
+      datasets: [{
+        data: [1711, 1289],
+        backgroundColor: ['#4f8ef7','#2ec08a'],
+        borderWidth: 3, borderColor: '#13151a', hoverOffset: 4
+      }]
+    },
+    options: { ...baseOpts, cutout: '60%' }
+  });
+
+  // Temps — Doughnut
+  new Chart(document.getElementById('c-temps'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Temps plein','Temps partiel'],
+      datasets: [{
+        data: [2430, 543],
+        backgroundColor: ['#4f8ef7','#ef4444'],
+        borderWidth: 3, borderColor: '#13151a', hoverOffset: 4
+      }]
+    },
+    options: { ...baseOpts, cutout: '60%' }
+  });
+
+  // Déplacement — Bar
+  new Chart(document.getElementById('c-deplacement'), {
+    type: 'bar',
+    data: {
+      labels: ['Local','National','Régional','Départemental'],
+      datasets: [{
+        data: [549, 317, 136, 136],
+        backgroundColor: ['rgba(79,142,247,0.8)','rgba(46,192,138,0.8)','rgba(245,158,11,0.8)','rgba(90,96,112,0.8)'],
+        borderColor: ['#4f8ef7','#2ec08a','#f59e0b','#5a6070'],
+        borderWidth: 1,
+        borderRadius: 5
+      }]
+    },
+    options: {
+      ...baseOpts,
+      scales: {
+        x: { ticks: { color: textColor, font: { size: 11 } }, grid: { display: false }, border: { display: false } },
+        y: { ticks: { color: textColor, font: { size: 10 } }, grid: { color: gridColor }, border: { display: false } }
+      },
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ' ' + c.parsed.y + ' offres' } } }
+    }
+  });
+</script>
+</body>
+</html>
