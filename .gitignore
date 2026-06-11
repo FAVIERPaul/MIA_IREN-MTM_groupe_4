@@ -1,0 +1,65 @@
+# ─── Clés API et secrets ─────────────────────────────────────────────
+.env
+.env.save
+.env.local
+.env.*.local
+*.key
+secrets/
+
+# ─── Données lourdes (hébergées sur HF Hub : gabinsrg/mia-france-travail) ──
+*.db
+*.sqlite
+*.npy
+*.npz
+*.pkl
+embeddings_chunks/
+
+# ─── Outputs générés par le pipeline ─────────────────────────────────
+outputs_cv/
+outputs_lm/
+matching_state/
+.jobflow/
+
+# ─── Données utilisateur locales ─────────────────────────────────────
+lm_exemples/
+profil_enrichi.json
+top10_matching.json
+
+# ─── Python ──────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+.venv/
+venv/
+env/
+
+# ─── Jupyter ─────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+
+# ─── LaTeX (outputs de compilation) ──────────────────────────────────
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+
+# ─── Streamlit ───────────────────────────────────────────────────────
+.streamlit/secrets.toml
+
+# ─── macOS ───────────────────────────────────────────────────────────
+.DS_Store
+._*
+
+# ─── IDE ─────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.cursor/
+
+# ─── HuggingFace cache ──────────────────────────────────────────────
+.cache/
